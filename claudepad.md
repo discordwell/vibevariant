@@ -1,5 +1,14 @@
 # Session Summaries
 
+## 2026-02-28T00:40Z — One-click CLI + MCP server shipped
+- @vibariant/cli: full setup wizard, device-code auth, CRUD for projects/experiments/goals, framework detection, code generation
+- @vibariant/mcp: 8 MCP tools for Claude Code integration (auth, projects, experiments, results, codegen)
+- API: POST /projects, CLI device-code auth (cli-login/cli-poll/cli-complete), GET /auth/me
+- npm workspaces root linking CLI, MCP, SDK packages
+- Code review fixes applied: email mismatch security check, 0600 config permissions, credential expiry consistency, dead code removal, hardcoded path fix, docker template path fix
+- 91 tests passing (SDK 59, CLI 27, MCP 5), committed as 4a1d087
+- Remaining refactor opportunities: extract shared API client package, consolidate resolveProjectId helper
+
 ## 2026-02-26TXX:XXZ — Stats Engine v2 implementation complete
 - All 10 phases implemented: epsilon stopping, ROPE, TopTwo Thompson, adaptive priors, calibration, winsorize/CUPED, shrinkage, API schemas, dashboard UX
 - 135 tests passing (73 existing + 62 new), all backward compatible
