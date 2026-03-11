@@ -107,26 +107,25 @@ export default function HeroSection() {
             : "opacity-0 translate-y-6"
         }`}
       >
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
-          A/B testing for apps with{" "}
-          <span className="bg-gradient-to-r from-blue-400 to-orange-400 bg-clip-text text-transparent">
-            12 users and a dream
-          </span>
+        {/* human-requested: full headline blue→white→orange gradient, scale to screen width */}
+        <h1 className="font-bold tracking-tight mb-6 leading-[1.1] bg-gradient-to-r from-blue-400 via-white to-orange-400 bg-clip-text text-transparent text-[clamp(2rem,5.5vw,4.5rem)]">
+          A/B testing for apps with 12 users and a dream
         </h1>
         <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto">
           Bayesian stats that work with tiny samples. Ship experiments in 3
           lines of code. Know what&apos;s winning before your traffic does.
         </p>
+        {/* human-requested: buttons match their side's color */}
         <div className="flex items-center justify-center gap-4 mt-8">
           <Link
             href="/login"
-            className="bg-gradient-to-r from-blue-600 to-orange-600 hover:from-blue-500 hover:to-orange-500 text-white font-medium px-6 py-3 rounded-lg transition-all duration-150 text-sm"
+            className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-6 py-3 rounded-lg transition-all duration-150 text-sm"
           >
             Start Free
           </Link>
           <a
             href="#demo"
-            className="text-zinc-400 hover:text-zinc-200 border border-zinc-700 hover:border-zinc-600 px-6 py-3 rounded-lg transition-all duration-150 text-sm font-medium"
+            className="bg-orange-600 hover:bg-orange-500 text-white font-medium px-6 py-3 rounded-lg transition-all duration-150 text-sm"
           >
             Watch Demo
           </a>
