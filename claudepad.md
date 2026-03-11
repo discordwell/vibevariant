@@ -1,5 +1,15 @@
 # Session Summaries
 
+## 2026-03-11T—:—Z — Login page bifurcation design
+- Implemented bifurcation visual identity on login page: abrupt style split at screen center
+- Desktop: vertical split (left=blue geometric, right=orange organic); Mobile: horizontal split
+- GeometricSide component: pixel grid, stepped waveforms, circuit paths, angular brackets, "A" watermark
+- OrganicSide component: S-curves, overlapping circles, sine waves, spiral, ellipses, "B" watermark
+- Brand text updated: "Vib" blue, "ariant" orange; button gradient blue→orange
+- CSS: `.bifurcation-a/.bifurcation-b` clip-path classes in globals.css, responsive via `@media (min-width: 768px)`
+- Design philosophy recorded in CLAUDE.md
+- Deployed to production (vibariant.com), verified live
+
 ## 2026-02-28T00:40Z — One-click CLI + MCP server shipped
 - @vibariant/cli: full setup wizard, device-code auth, CRUD for projects/experiments/goals, framework detection, code generation
 - @vibariant/mcp: 8 MCP tools for Claude Code integration (auth, projects, experiments, results, codegen)

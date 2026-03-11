@@ -74,8 +74,8 @@ export default function Sidebar() {
             <span className="text-white font-bold text-sm">V</span>
           </div>
           <span className="text-lg font-semibold tracking-tight">
-            <span className="text-violet-400">Vibe</span>
-            <span className="text-zinc-100">Variant</span>
+            <span className="text-blue-400">Vib</span>
+            <span className="text-orange-400">ariant</span>
           </span>
         </Link>
       </div>

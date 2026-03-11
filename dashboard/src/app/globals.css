@@ -36,6 +36,22 @@ body {
   background: var(--color-zinc-600);
 }
 
+/* Bifurcation split — desktop: vertical, mobile: horizontal */
+.bifurcation-a {
+  clip-path: inset(0 0 50% 0);
+}
+.bifurcation-b {
+  clip-path: inset(50% 0 0 0);
+}
+@media (min-width: 768px) {
+  .bifurcation-a {
+    clip-path: inset(0 50% 0 0);
+  }
+  .bifurcation-b {
+    clip-path: inset(0 0 0 50%);
+  }
+}
+
 /* Loading skeleton animation */
 @keyframes shimmer {
   0% {
