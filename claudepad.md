@@ -1,5 +1,16 @@
 # Session Summaries
 
+## 2026-03-11T—:—Z — Landing page implementation
+- Built full marketing landing page at `/` replacing redirect-only page
+- 7 new components in `dashboard/src/components/landing/`: BifurcationBackground, LandingNav, HeroSection, FeaturesSection, DemoSection, PricingSection, FooterSection
+- Bifurcation strategy: fixed background layer (split line + gradient washes) + per-section SVG decorations (no clip-path)
+- Interactive demo: live A/B simulation with Beta-Binomial Monte Carlo (2000 samples), auto-starts on scroll via IntersectionObserver, speed controls (1x/5x/10x)
+- Auth-aware nav: shows "Start Free" or "Go to Dashboard" based on JWT in localStorage
+- Pricing: Free/$0, Pro/$29, Team/$99 with feature comparison
+- Code review fixes: MC samples 100→2000 (reduce jitter), derived state refactor (useMemo vs useState+useEffect), Winner label fix (A vs B), ARIA attributes (progressbar, aria-pressed, aria-disabled, aria-label)
+- Smooth scroll via `scroll-behavior: smooth` in globals.css
+- Build clean, deployed, wet tested in browser
+
 ## 2026-03-11T—:—Z — Login page bifurcation design
 - Implemented bifurcation visual identity on login page: abrupt style split at screen center
 - Desktop: vertical split (left=blue geometric, right=orange organic); Mobile: horizontal split
