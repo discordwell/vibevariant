@@ -72,6 +72,8 @@ export class VibariantAPI {
       throw new Error(`API ${resp.status}: ${detail}`);
     }
 
+    if (resp.status === 204) return undefined as T;
+
     return resp.json() as Promise<T>;
   }
 
@@ -125,7 +127,26 @@ export class VibariantAPI {
     return this.request<{ id: string; status: string; name: string }>('PATCH', `/api/v1/experiments/${id}`, data);
   }
 
+  async deleteExperiment(id: string): Promise<void> {
+    await this.request<void>('DELETE', `/api/v1/experiments/${id}`);
+  }
+
   async getResults(experimentId: string) {
     return this.request<Record<string, unknown>>('GET', `/api/v1/experiments/${experimentId}/results`);
+  }
+
+  async listGoals(projectId: string) {
+    return this.request<Array<{ id: string; type: string; label: string; confirmed: boolean }>>(
+      'GET',
+      `/api/v1/goals?project_id=${encodeURIComponent(projectId)}`,
+    );
+  }
+
+  async confirmGoal(goalId: string) {
+    return this.request<{ id: string; confirmed: boolean }>(
+      'PATCH',
+      `/api/v1/goals/${goalId}`,
+      { confirmed: true },
+    );
   }
 }

@@ -1,5 +1,28 @@
 # Session Summaries
 
+## 2026-03-12T02:40Z — Upgrade MCP server: 8 → 13 tools with CLI parity
+- Migrated all tools from deprecated `server.tool()` to `server.registerTool()` with MCP annotations (readOnlyHint, destructiveHint, idempotentHint, openWorldHint)
+- Added 5 new tools: `vibariant_delete_experiment`, `vibariant_experiment_show`, `vibariant_goals_list`, `vibariant_goals_confirm`, `vibariant_status`
+- Added `generateCodeStructured()` to codegen.ts: returns `{ files: [{path, content}] }` instead of markdown
+- Added 3 API methods to api.ts: `deleteExperiment`, `listGoals`, `confirmGoal` + 204 void response guard
+- Extracted helpers (compact, resolveProjectId, aggregateStatus, findExperiment) to `helpers.ts` to avoid top-level await side effects in tests
+- compact() now returns `{items, total, truncated}` when truncating arrays (prevents LLMs reasoning on incomplete data)
+- Fixed create_experiment auto-start bug (now returns draft status matching CLI behavior)
+- Fixed update_experiment truthiness check (`!== undefined` instead of `if (val)`)
+- 29 MCP tests passing (13 codegen + 16 server helpers), 62 CLI tests still passing
+- Updated ARCHITECTURE.md: "8 tools" → "13 tools"
+
+## 2026-03-12T00:31Z — Restore MCP as opt-in secondary integration
+- Recovered `packages/mcp/` from git history (commit 4a1d087): 8 MCP tools, API client, codegen
+- New hidden `vibariant mcp-install` command with shared `installMcpConfig()` helper
+- `vibariant init --mcp` flag: interactive prompt defaults to No, `--yes` without `--mcp` skips MCP
+- Updated ARCHITECTURE.md: "Claude Code Integration" → "AI Agent Integration" with primary (CLI+skills) and secondary (MCP) sections
+- Fixed Commander.js `.hidden()` incompatibility → used `addCommand(cmd, { hidden: true })`
+- Fixed URL parameter injection in MCP api.ts (`encodeURIComponent` on projectId)
+- Added `homeDir` option to `installMcpConfig` for testable global scope
+- 67 tests passing (62 CLI including 7 new mcp-install tests, 5 MCP codegen tests)
+- Code review: inherited issues (stale response in create_experiment, no timeout on API calls, top-level await) documented but not changed since files recovered verbatim
+
 ## 2026-03-11T16:40Z — CLI-first Claude integration (replace MCP)
 - Deleted `packages/mcp/` entirely — CLI is now sole AI integration surface
 - New `vibariant codegen` command: generates SDK integration code, `--json` returns file contents

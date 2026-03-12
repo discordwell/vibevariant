@@ -1,4 +1,98 @@
-type Framework = 'nextjs' | 'react' | 'vanilla';
+export type Framework = 'nextjs' | 'react' | 'vanilla';
+
+interface CodeFile {
+  path: string;
+  content: string;
+}
+
+export function generateCodeStructured(
+  framework: Framework,
+  projectToken: string,
+  experimentKey?: string,
+): { files: CodeFile[] } {
+  const files: CodeFile[] = [];
+
+  // Config file (all frameworks)
+  files.push({
+    path: 'vibariant.config.ts',
+    content: [
+      `export const vibariantConfig = {`,
+      `  projectToken: '${projectToken}',`,
+      `};`,
+    ].join('\n'),
+  });
+
+  // Framework-specific provider/init
+  switch (framework) {
+    case 'nextjs':
+      files.push({
+        path: 'components/vibariant-provider.tsx',
+        content: [
+          `'use client';`,
+          `import { VibariantProvider } from '@vibariant/sdk/react';`,
+          `import { vibariantConfig } from '@/vibariant.config';`,
+          ``,
+          `export function VibariantWrapper({ children }: { children: React.ReactNode }) {`,
+          `  return (`,
+          `    <VibariantProvider config={vibariantConfig}>`,
+          `      {children}`,
+          `    </VibariantProvider>`,
+          `  );`,
+          `}`,
+        ].join('\n'),
+      });
+      break;
+    case 'react':
+      files.push({
+        path: 'src/vibariant-provider.tsx',
+        content: [
+          `import { VibariantProvider } from '@vibariant/sdk/react';`,
+          `import { vibariantConfig } from './vibariant.config';`,
+          ``,
+          `export function VibariantWrapper({ children }: { children: React.ReactNode }) {`,
+          `  return (`,
+          `    <VibariantProvider config={vibariantConfig}>`,
+          `      {children}`,
+          `    </VibariantProvider>`,
+          `  );`,
+          `}`,
+        ].join('\n'),
+      });
+      break;
+    case 'vanilla':
+      files.push({
+        path: 'vibariant.ts',
+        content: [
+          `import { Vibariant } from '@vibariant/sdk';`,
+          `import { vibariantConfig } from './vibariant.config';`,
+          ``,
+          `export const vibariant = new Vibariant(vibariantConfig);`,
+          `await vibariant.init();`,
+        ].join('\n'),
+      });
+      break;
+  }
+
+  // Example experiment (react/nextjs only, when key provided)
+  if (experimentKey && framework !== 'vanilla') {
+    files.push({
+      path: framework === 'nextjs'
+        ? 'components/experiment-example.tsx'
+        : 'src/experiment-example.tsx',
+      content: [
+        `import { useVariant } from '@vibariant/sdk/react';`,
+        ``,
+        `function MyComponent() {`,
+        `  const { variant } = useVariant('${experimentKey}', ['control', 'variant']);`,
+        `  if (variant === 'control') return <div>Control</div>;`,
+        `  return <div>Variant</div>;`,
+        `}`,
+      ].join('\n'),
+    });
+  }
+
+  return { files };
+}
 
 export function generateCode(framework: Framework, projectToken: string, experimentKey?: string): string {
   const lines: string[] = [];

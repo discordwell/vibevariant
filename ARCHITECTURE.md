@@ -137,7 +137,7 @@ with this approach — it's token-efficient and requires zero configuration.
 ### Secondary: MCP Server (Opt-In)
 For models with weaker tool-use capabilities, an MCP server (`@vibariant/mcp`) provides
 structured tool schemas. Enable via `vibariant init --mcp` or `vibariant mcp-install`.
-The MCP server exposes 8 tools covering auth, projects, experiments, results, and codegen.
+The MCP server exposes 13 tools covering auth, projects, experiments, results, goals, status, and codegen.
 
 ### CLI Design for AI Agents
 - `--json` flag on all commands outputs structured `{ ok, data }` / `{ ok, error }` envelopes
