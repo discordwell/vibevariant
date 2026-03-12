@@ -87,18 +87,26 @@ describe('JSON output helpers', () => {
 });
 
 describe('skill template exports', () => {
-  it('exports valid SKILL_MD content', async () => {
-    const { SKILL_MD, WORKFLOWS_MD, CLAUDE_MD_LINE } = await import('../src/lib/skill-template.js');
+  it('exports SKILL_FILES with all expected files', async () => {
+    const { SKILL_FILES, CLAUDE_MD_LINE } = await import('../src/lib/skill-template.js');
 
-    // SKILL_MD should have frontmatter
-    expect(SKILL_MD).toContain('---');
-    expect(SKILL_MD).toContain('name: vibariant');
-    expect(SKILL_MD).toContain('user_invocable: true');
-    expect(SKILL_MD).toContain('--json');
+    // Should have all reference files
+    expect(SKILL_FILES).toHaveProperty('SKILL.md');
+    expect(SKILL_FILES).toHaveProperty('auth.md');
+    expect(SKILL_FILES).toHaveProperty('experiments.md');
+    expect(SKILL_FILES).toHaveProperty('projects.md');
+    expect(SKILL_FILES).toHaveProperty('codegen.md');
+    expect(SKILL_FILES).toHaveProperty('goals.md');
+    expect(SKILL_FILES).toHaveProperty('workflows.md');
 
-    // WORKFLOWS_MD should have workflow examples
-    expect(WORKFLOWS_MD).toContain('vibariant experiments');
-    expect(WORKFLOWS_MD).toContain('vibariant codegen');
+    // SKILL.md should have frontmatter
+    expect(SKILL_FILES['SKILL.md']).toContain('name: vibariant');
+    expect(SKILL_FILES['SKILL.md']).toContain('user_invocable: true');
+    expect(SKILL_FILES['SKILL.md']).toContain('allowed-tools');
+
+    // Workflows should have command examples
+    expect(SKILL_FILES['workflows.md']).toContain('vibariant experiments');
+    expect(SKILL_FILES['workflows.md']).toContain('vibariant codegen');
 
     // CLAUDE_MD_LINE should reference the skill
     expect(CLAUDE_MD_LINE).toContain('/vibariant');

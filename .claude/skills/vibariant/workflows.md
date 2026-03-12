@@ -1,71 +1,73 @@
-# Vibariant Workflows
+# Workflows & Reference
 
-## Workflow 1: Create and Run an Experiment
+## End-to-End: Create, Run, Ship
 
 ```bash
-# 1. Ensure authenticated
+# 1. Auth
 vibariant auth status --json
 
-# 2. Create the experiment
+# 2. Create experiment
 vibariant experiments create --key checkout-cta --name "Checkout CTA" --variants control,urgent,social-proof --json
 
-# 3. Start it running
-vibariant experiments update <experiment-id> --status running --json
+# 3. Start it
+vibariant experiments update <id-from-step-2> --status running --json
 
-# 4. Generate SDK code with the experiment
+# 4. Generate SDK integration code
 vibariant codegen --framework next --experiment-key checkout-cta --variants control,urgent,social-proof --json
 
-# 5. The --json output gives you the file contents to integrate
-```
+# 5. (integrate code, deploy, wait for traffic)
 
-## Workflow 2: Check Results and Ship Winner
-
-```bash
-# 1. Check experiment status
+# 6. Check results
 vibariant experiments show checkout-cta --json
+# Look at decision_status: collecting_data → keep_testing → ready_to_ship
 
-# 2. Look at decision_status in the response:
-#    - "collecting_data" → need more traffic
-#    - "keep_testing" → differences emerging but not yet conclusive
-#    - "ready_to_ship" → winner identified, safe to ship
-#    - "practically_equivalent" → no meaningful difference
-
-# 3. When ready, update status to completed
+# 7. Ship winner
 vibariant experiments update <id> --status completed --json
 ```
 
-## Workflow 3: Full Project Setup
+## Quick Status Check
 
 ```bash
-# Non-interactive setup for a new project
+vibariant status --json                          # overview of all experiments
+vibariant experiments show hero-headline --json  # one experiment with stats
+```
+
+## Full Project Setup
+
+```bash
+# Non-interactive (CI / AI agent)
 vibariant init --yes --email dev@company.com --project-name "My SaaS" --skip-docker --api-url https://api.vibariant.com
 
-# Or interactive
+# Interactive (human)
 vibariant init
 ```
 
-## Workflow 4: Quick Status Check
+`vibariant init` handles: backend check, auth, project creation, SDK install, codegen, first experiment, and skill installation.
+
+## Configuration
 
 ```bash
-# Overview of all experiments
-vibariant status --json
-
-# Detailed look at a specific experiment
-vibariant experiments show hero-headline --json
+vibariant config get api_url
+vibariant config set api_url https://api.vibariant.com
 ```
+
+Keys: `api_url`, `project_id`, `project_token`, `email`.
 
 ## Error Handling
 
-- Exit code `2` means not authenticated — run `vibariant auth login`
-- Exit code `3` means the resource was not found (wrong ID/key)
-- Exit code `1` is a general error — check the `error` field in the JSON response
-- All JSON errors follow: `{ "ok": false, "error": "descriptive message" }`
+| Exit Code | Meaning | Fix |
+|-----------|---------|-----|
+| `0` | Success | — |
+| `1` | General error | Check `error` field in JSON |
+| `2` | Not authenticated | Run `vibariant auth login` |
+| `3` | Not found | Check ID/key spelling |
 
 ## Tips for AI Agents
 
 1. Always use `--json` for parseable output
-2. Use `--yes` to avoid interactive prompts that would block
-3. You can look up experiments by key (e.g., `hero-headline`) or by UUID
-4. The `codegen --json` command returns file contents without writing to disk — useful for reviewing before applying
-5. The `experiments show` command combines experiment metadata with stats in one call
-6. Project ID is stored after `vibariant init` — subsequent commands auto-resolve it
+2. Use `--yes` to skip interactive prompts that would block
+3. Experiments can be looked up by key (`hero-headline`) or UUID
+4. `codegen --json` returns file contents without writing to disk — review before applying
+5. `experiments show` combines metadata + stats in one call
+6. Project ID auto-resolves after `vibariant init` — no need to pass `--project-id`
+7. `experiments create` creates in draft — follow with `update --status running` to start
