@@ -11,6 +11,7 @@ import { isApiReachable, isDockerAvailable, startBackend } from '../lib/docker.j
 import { generateIntegrationCode, writeGeneratedFiles, printSetupInstructions } from '../lib/codegen.js';
 import { printSummary } from '../lib/format.js';
 import { installSkill } from '../lib/skill-template.js';
+import { installMcpConfig } from './mcp-install.js';
 
 export function registerInitCommand(program: Command): void {
   program
@@ -26,6 +27,7 @@ export function registerInitCommand(program: Command): void {
     .option('--skip-experiment', 'Skip experiment creation')
     .option('--force', 'Overwrite existing files')
     .option('--yes', 'Accept all defaults')
+    .option('--mcp', 'Also install MCP server (for non-frontier models)')
     .action(async (opts) => {
       console.log('');
       console.log(chalk.bold('Vibariant Setup'));
@@ -250,6 +252,31 @@ export function registerInitCommand(program: Command): void {
       installSkill(process.cwd());
 
       // ─────────────────────────────────────────────────
+      // Step 7b: MCP Server (opt-in)
+      // ─────────────────────────────────────────────────
+      let mcpInstalled = false;
+      if (opts.mcp) {
+        // --mcp flag passed: install without prompting
+        const mcpPath = installMcpConfig(process.cwd(), 'project');
+        console.log(chalk.green(`MCP server configured in ${mcpPath}`));
+        mcpInstalled = true;
+      } else if (!opts.yes) {
+        // Interactive mode: ask
+        const enableMcp = await confirm({
+          message:
+            'Enable MCP server? (only recommended for non-frontier models)\n' +
+            '  CLI + skills are optimized for Claude Opus/Sonnet, GPT-5, and similar frontier models.',
+          default: false,
+        });
+        if (enableMcp) {
+          const mcpPath = installMcpConfig(process.cwd(), 'project');
+          console.log(chalk.green(`MCP server configured in ${mcpPath}`));
+          mcpInstalled = true;
+        }
+      }
+      // --yes without --mcp: skip MCP (default off)
+
+      // ─────────────────────────────────────────────────
       // Step 8: Summary
       // ─────────────────────────────────────────────────
       const entries: Array<[string, string]> = [
@@ -263,6 +290,10 @@ export function registerInitCommand(program: Command): void {
       }
 
       entries.push(['Framework', env.framework]);
+
+      if (mcpInstalled) {
+        entries.push(['MCP', 'enabled (restart Claude Code to activate)']);
+      }
 
       printSummary('Vibariant is ready!', entries);
 

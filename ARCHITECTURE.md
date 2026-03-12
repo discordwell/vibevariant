@@ -120,15 +120,24 @@ All commands support `--api-url`, `--json`, and `--yes` flags for scripting and 
 ### CLI Auth Flow
 Device-code flow similar to GitHub CLI: CLI gets a device_code, user verifies via email magic link, CLI polls until authorized. In dev mode (default SECRET_KEY), auto-completes instantly without email.
 
-## Claude Code Integration
+## AI Agent Integration
 
-The CLI is the sole integration surface for AI agents. Instead of an MCP server, Vibariant ships a **Claude Code skill** that documents the CLI for automated use.
+### Primary: CLI + Skills (Recommended)
+The CLI is the primary integration surface. `vibariant init` installs a Claude Code skill
+at `.claude/skills/vibariant/` and equivalent instruction files for other agents (AGENTS.md,
+.github/copilot-instructions.md). Frontier models (Claude Opus/Sonnet, GPT-5) work best
+with this approach — it's token-efficient and requires zero configuration.
 
-### How It Works
+#### How It Works
 1. `vibariant init` installs `.claude/skills/vibariant/SKILL.md` in the user's project
 2. Claude Code auto-discovers the skill and makes it available as `/vibariant`
 3. The skill documents all CLI commands with `--json` examples
 4. Claude runs CLI commands via bash — zero config, no server process, token-efficient
+
+### Secondary: MCP Server (Opt-In)
+For models with weaker tool-use capabilities, an MCP server (`@vibariant/mcp`) provides
+structured tool schemas. Enable via `vibariant init --mcp` or `vibariant mcp-install`.
+The MCP server exposes 8 tools covering auth, projects, experiments, results, and codegen.
 
 ### CLI Design for AI Agents
 - `--json` flag on all commands outputs structured `{ ok, data }` / `{ ok, error }` envelopes
@@ -138,7 +147,8 @@ The CLI is the sole integration surface for AI agents. Instead of an MCP server,
 
 ### Setup
 ```bash
-npx @vibariant/cli init  # Installs skill automatically
+npx @vibariant/cli init        # Installs skill (recommended)
+npx @vibariant/cli init --mcp  # Installs skill + MCP server
 ```
 
 ## Deployment

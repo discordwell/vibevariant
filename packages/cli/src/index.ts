@@ -8,6 +8,7 @@ import { registerGoalsCommand } from './commands/goals.js';
 import { registerStatusCommand } from './commands/status.js';
 import { registerConfigCommand } from './commands/config.js';
 import { registerCodegenCommand } from './commands/codegen.js';
+import { registerMcpInstallCommand } from './commands/mcp-install.js';
 
 const program = new Command();
 
@@ -24,6 +25,7 @@ registerGoalsCommand(program);
 registerStatusCommand(program);
 registerConfigCommand(program);
 registerCodegenCommand(program);
+registerMcpInstallCommand(program);
 
 // Detect --json anywhere in argv for error formatting
 const isJsonMode = process.argv.includes('--json');
