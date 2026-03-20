@@ -4,8 +4,24 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SSH_HOST="${DEPLOY_SSH_HOST:-ovh2}"
 REMOTE_PATH="/opt/vibariant"
+REBOOT_SCRIPT="${HOME}/Projects/shared/reboot-vps.sh"
+
+# SSH kicker: test connectivity, reboot via OVH API if unreachable
+ensure_ssh() {
+  if ssh -o ConnectTimeout=10 -o BatchMode=yes "$SSH_HOST" "true" 2>/dev/null; then
+    return 0
+  fi
+  echo "SSH unreachable — kicking server via OVH API..."
+  if [[ -x "$REBOOT_SCRIPT" ]]; then
+    "$REBOOT_SCRIPT" ovh2 --wait
+  else
+    echo "ERROR: reboot script not found: $REBOOT_SCRIPT" >&2
+    exit 1
+  fi
+}
 
 echo "=== Vibariant Deploy ==="
+ensure_ssh
 echo ""
 
 # Step 1: Sync project to server
